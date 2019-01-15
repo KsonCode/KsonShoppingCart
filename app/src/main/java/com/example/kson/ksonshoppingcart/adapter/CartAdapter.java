@@ -22,8 +22,15 @@ public class CartAdapter extends XRecyclerView.Adapter<CartAdapter.MyVh> impleme
     private Context context;
     private List<CartBean.Cart> carts;
 
+    /**
+     * 通知首页的接口
+     */
     private CartUICallback cartCallback;
 
+    /**
+     * 初始化首页接口，对外暴露
+     * @param cartCallback
+     */
     public void setCartCallback(CartUICallback cartCallback) {
         this.cartCallback = cartCallback;
     }
@@ -50,13 +57,14 @@ public class CartAdapter extends XRecyclerView.Adapter<CartAdapter.MyVh> impleme
 
         myVh.checkBox.setChecked(cart.isChecked);
 
-        //对每件商品的pos赋值
+        //对每件商品的pos赋值，记录一级列表的位置pos
         for (CartBean.Cart.Product product : cart.list) {
             product.pos = i;
         }
 
+        //二级适配器
         ProductAdapter productAdapter = new ProductAdapter(context, cart.list);
-        productAdapter.setCartCallback(this);
+        productAdapter.setCartCallback(this);//设置二级适配器回调接口
 
         myVh.xRecyclerView.setLayoutManager(new LinearLayoutManager(context));
 
@@ -65,13 +73,16 @@ public class CartAdapter extends XRecyclerView.Adapter<CartAdapter.MyVh> impleme
         myVh.checkBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                cart.isChecked = myVh.checkBox.isChecked();
+                cart.isChecked = myVh.checkBox.isChecked();//设置一级对象的选中状态
 
+                //设置二级对象选中状态
                 for (CartBean.Cart.Product product : cart.list) {
                     product.isProductChecked = cart.isChecked;
                 }
 
+                //通知刷新
                 notifyDataSetChanged();
+                //选中状态改变后，通知首页价格联动
                 if (cartCallback!=null){
                     cartCallback.notifyCart();
                 }
@@ -86,6 +97,11 @@ public class CartAdapter extends XRecyclerView.Adapter<CartAdapter.MyVh> impleme
         return carts == null ? 0 : carts.size();
     }
 
+    /**
+     * 二级列表选中状态的监听，通知一级列表刷新数据
+     * @param isChecked
+     * @param postion
+     */
     @Override
     public void notifyCartItem(boolean isChecked, int postion) {
 
@@ -94,9 +110,11 @@ public class CartAdapter extends XRecyclerView.Adapter<CartAdapter.MyVh> impleme
 //        }else{
 //            carts.get(postion).isChecked = false;
 //        }
+        //设置一级列表的选中状态
         carts.get(postion).isChecked = isChecked;
         notifyDataSetChanged();
 
+        //选中状态改变后，通知主页联动价格
         if (cartCallback!=null){
             cartCallback.notifyCart();
         }
@@ -104,6 +122,9 @@ public class CartAdapter extends XRecyclerView.Adapter<CartAdapter.MyVh> impleme
 
     }
 
+    /**
+     * 数量改变后，通知价格联动
+     */
     @Override
     public void notifyNum() {
         if (cartCallback!=null){

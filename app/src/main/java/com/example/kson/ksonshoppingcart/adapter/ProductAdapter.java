@@ -24,6 +24,9 @@ public class ProductAdapter extends XRecyclerView.Adapter<ProductAdapter.MyVh>  
     private Context context;
     private List<CartBean.Cart.Product> carts;
 
+    /**
+     * 一级列表回调接口
+     */
     private CartCallback cartCallback;
 
     public void setCartCallback(CartCallback cartCallback) {
@@ -58,10 +61,12 @@ public class ProductAdapter extends XRecyclerView.Adapter<ProductAdapter.MyVh>  
 
         myVh.priceTv.setText("¥：" + product.price);
         myVh.titleTv.setText(product.title);
+        //加减器监听
         myVh.addMinusView.setAddMinusCallback(new AddMinusView.AddMinusCallback() {
             @Override
             public void numCallback(int num) {
-                product.productNum = num;
+                product.productNum = num;//对当前商品数量动态改变
+                //通知一级列表数量改变，刷新数据
                 if (cartCallback != null) {
                     cartCallback.notifyNum();
                 }
@@ -70,26 +75,29 @@ public class ProductAdapter extends XRecyclerView.Adapter<ProductAdapter.MyVh>  
 
 
 
+        //设置二级按钮选中状态
         myVh.checkBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 System.out.println("myVh.checkBox.isChecked():"+myVh.checkBox.isChecked());
 
-                if (!myVh.checkBox.isChecked()) {//未选中
+                if (!myVh.checkBox.isChecked()) {//二级未选中
                     product.isProductChecked = false;
 
-                    //一级未选中
+                    //一级未选中的回调
 
                     if (cartCallback != null) {
                         cartCallback.notifyCartItem(false, product.pos);
                     }
 
 
-                } else {//已选中
+                } else {//二级已选中
                     product.isProductChecked = true;
 
+                    //遍历所有数据
                     for (CartBean.Cart.Product cart : carts) {
 
+                        //如果有一个为选中，一级未选中
                         if (!myVh.checkBox.isChecked()) {
                             //一级未选中
                             cart.isProductChecked = false;
@@ -99,6 +107,7 @@ public class ProductAdapter extends XRecyclerView.Adapter<ProductAdapter.MyVh>  
                             return;
                         }
 
+                        //如果有一个选中或者都选中，则一级选中
                         if (myVh.checkBox.isChecked()) {
 //                            cart.isProductChecked = true;//这行代码去掉
                             //一级选中

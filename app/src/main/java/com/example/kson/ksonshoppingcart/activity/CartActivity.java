@@ -35,6 +35,9 @@ public class CartActivity extends AppCompatActivity implements CartContract.ICar
         initData();
     }
 
+    /**
+     * 初始化数据
+     */
     private void initData() {
         cartPresenter = new CartPresenter(this);
         carts = new ArrayList<>();
@@ -44,37 +47,43 @@ public class CartActivity extends AppCompatActivity implements CartContract.ICar
     }
 
 
+    /**
+     * 初始化view
+     */
     private void initView() {
         xRecyclerView = findViewById(R.id.rv);
-        xRecyclerView.setLoadingListener(this);
+        xRecyclerView.setLoadingListener(this);//设置加载监听器
         xRecyclerView.setLoadingMoreEnabled(true);//设置上拉加载
         xRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         checkBox = findViewById(R.id.checkbox);
+        //设置全选反选按钮
         checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-                if (isChecked) {
+                if (isChecked) {//全选按钮选中
                     // TODO: 2019/1/15
 
                     for (CartBean.Cart cart : carts) {
-                        cart.isChecked = true;
+                        cart.isChecked = true;//设置一级商家选中
                         for (CartBean.Cart.Product product : cart.list) {
-                            product.isProductChecked = true;
+                            product.isProductChecked = true;//设置二级商品选中
                         }
                     }
 
-                } else {
+                } else {//未选中
 
                     for (CartBean.Cart cart : carts) {
-                        cart.isChecked = false;
+                        cart.isChecked = false;//设置一级商家未选中
                         for (CartBean.Cart.Product product : cart.list) {
-                            product.isProductChecked = false;
+                            product.isProductChecked = false;//设置二级商品未选中
                         }
                     }
                 }
 
+                //通知刷新适配器
                 cartAdapter.notifyDataSetChanged();
+
                 getTotalPrice();
 
             }
@@ -113,6 +122,7 @@ public class CartActivity extends AppCompatActivity implements CartContract.ICar
      */
     private void getTotalPrice() {
         double totalprice = 0;
+        //遍历所有商品计算总价
         for (CartBean.Cart cart : carts) {
 
             for (CartBean.Cart.Product product : cart.list) {
@@ -124,11 +134,15 @@ public class CartActivity extends AppCompatActivity implements CartContract.ICar
 
             }
         }
+        //设置总价
         checkBox.setText("¥：" + totalprice);
 
 
     }
 
+    /**
+     * 通知底部导航栏总价联动
+     */
     @Override
     public void notifyCart() {
         getTotalPrice();
