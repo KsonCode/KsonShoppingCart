@@ -100,7 +100,7 @@ public class ProductAdapter extends XRecyclerView.Adapter<ProductAdapter.MyVh>  
                         }
 
                         if (myVh.checkBox.isChecked()) {
-                            cart.isProductChecked = true;
+//                            cart.isProductChecked = true;//这行代码去掉
                             //一级选中
                             if (cartCallback != null) {
                                 cartCallback.notifyCartItem(true, product.pos);

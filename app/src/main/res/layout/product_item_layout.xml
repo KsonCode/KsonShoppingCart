@@ -10,7 +10,7 @@
 
         <LinearLayout
             android:id="@+id/left_layout"
-            android:layout_toLeftOf="@+id/right_layout"
+            android:layout_toLeftOf="@+id/addminusView"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_width="wrap_content"
@@ -57,6 +57,7 @@
 
         <com.example.kson.ksonshoppingcart.widget.AddMinusView
             android:id="@+id/addminusView"
+            android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>

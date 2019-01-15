@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class CartActivity extends AppCompatActivity implements CartContract.ICartView,CartUICallback {
+public class CartActivity extends AppCompatActivity implements CartContract.ICartView,CartUICallback,XRecyclerView.LoadingListener {
     private XRecyclerView xRecyclerView;
 
     private CheckBox checkBox;
@@ -46,6 +46,8 @@ public class CartActivity extends AppCompatActivity implements CartContract.ICar
 
     private void initView() {
         xRecyclerView = findViewById(R.id.rv);
+        xRecyclerView.setLoadingListener(this);
+        xRecyclerView.setLoadingMoreEnabled(true);//设置上拉加载
         xRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         checkBox = findViewById(R.id.checkbox);
         checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -130,5 +132,23 @@ public class CartActivity extends AppCompatActivity implements CartContract.ICar
     @Override
     public void notifyCart() {
         getTotalPrice();
+    }
+
+    /**
+     * 下拉
+     */
+    @Override
+    public void onRefresh() {
+
+        xRecyclerView.refreshComplete();
+
+    }
+
+    /**
+     * 加载更多
+     */
+    @Override
+    public void onLoadMore() {
+        xRecyclerView.loadMoreComplete();
     }
 }
