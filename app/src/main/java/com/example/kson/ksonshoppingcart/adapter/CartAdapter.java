@@ -40,6 +40,10 @@ public class CartAdapter extends XRecyclerView.Adapter<CartAdapter.MyVh> impleme
         this.carts = carts;
     }
 
+    public List<CartBean.Cart> getCarts() {
+        return carts;
+    }
+
     @NonNull
     @Override
     public MyVh onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
@@ -129,6 +133,18 @@ public class CartAdapter extends XRecyclerView.Adapter<CartAdapter.MyVh> impleme
     public void notifyNum() {
         if (cartCallback!=null){
             cartCallback.notifyCart();
+        }
+    }
+
+    /**
+     * 加载新的数据，并刷新适配器
+     * @param list
+     */
+    public void addData(List<CartBean.Cart> list) {
+
+        if (list!=null&&carts!=null){
+            carts.addAll(list);
+            notifyDataSetChanged();
         }
     }
 

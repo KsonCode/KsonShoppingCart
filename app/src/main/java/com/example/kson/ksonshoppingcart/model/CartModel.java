@@ -7,9 +7,11 @@ import com.example.kson.ksonshoppingcart.contract.CartContract;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -27,7 +29,15 @@ public class CartModel implements CartContract.ICartModel {
                 .addInterceptor(interceptor)
                 .build();
 
-        Request request = new Request.Builder().url(ProductApi.CART_URL)
+        FormBody.Builder builder = new FormBody.Builder();
+        for (Map.Entry<String, String> map : params.entrySet()) {
+
+
+            builder.add(map.getKey(),map.getValue());
+
+        }
+
+        Request request = new Request.Builder().post(builder.build()).url(ProductApi.CART_URL)
                 .build();
 
         okHttpClient.newCall(request).enqueue(new Callback() {

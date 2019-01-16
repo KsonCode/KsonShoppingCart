@@ -1,8 +1,10 @@
 package com.example.kson.ksonshoppingcart.adapter;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -97,25 +99,39 @@ public class ProductAdapter extends XRecyclerView.Adapter<ProductAdapter.MyVh>  
                     //遍历所有数据
                     for (CartBean.Cart.Product cart : carts) {
 
-                        //如果有一个为选中，一级未选中
-                        if (!myVh.checkBox.isChecked()) {
-                            //一级未选中
-                            cart.isProductChecked = false;
+                        //判断集合内商品的选中状态，如果未选中
+                        if (!cart.isProductChecked){
                             if (cartCallback != null) {
                                 cartCallback.notifyCartItem(false, product.pos);
                             }
-                            return;
-                        }
-
-                        //如果有一个选中或者都选中，则一级选中
-                        if (myVh.checkBox.isChecked()) {
-//                            cart.isProductChecked = true;//这行代码去掉
-                            //一级选中
-                            if (cartCallback != null) {
-                                cartCallback.notifyCartItem(true, product.pos);
-                            }
+                            break;//跳出循环
 
                         }
+                        //如果都选中，设置一级为true
+                        if (cartCallback != null) {
+                            cartCallback.notifyCartItem(true, product.pos);
+                        }
+
+                        //以下代码有问题，注掉
+//                        //如果有一个未选中，一级未选中
+//                        if (!myVh.checkBox.isChecked()) {
+//                            //一级未选中
+//                            cart.isProductChecked = false;
+//                            if (cartCallback != null) {
+//                                cartCallback.notifyCartItem(false, product.pos);
+//                            }
+//                            continue;
+//                        }
+//
+//                        //如果都选中，则一级选中
+//                        if (myVh.checkBox.isChecked()) {
+////                            cart.isProductChecked = true;//这行代码去掉
+//                            //一级选中
+//                            if (cartCallback != null) {
+//                                cartCallback.notifyCartItem(true, product.pos);
+//                            }
+//
+//                        }
                     }
 
 

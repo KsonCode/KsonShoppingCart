@@ -3,6 +3,7 @@ package com.example.kson.ksonshoppingcart.activity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
+import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 
@@ -19,13 +20,15 @@ import java.util.HashMap;
 import java.util.List;
 
 public class CartActivity extends AppCompatActivity implements CartContract.ICartView,CartUICallback,XRecyclerView.LoadingListener {
-    private XRecyclerView xRecyclerView;
 
+    private XRecyclerView xRecyclerView;
     private CheckBox checkBox;
 
     private CartPresenter cartPresenter;
     private CartAdapter cartAdapter;
     private List<CartBean.Cart> carts;
+    private int page = 1;//页码
+    private HashMap<String,String> params;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,11 +42,25 @@ public class CartActivity extends AppCompatActivity implements CartContract.ICar
      * 初始化数据
      */
     private void initData() {
+
         cartPresenter = new CartPresenter(this);
         carts = new ArrayList<>();
 
-        cartPresenter.getCarts(new HashMap<String, String>());
+        requstData();
 
+    }
+
+
+
+    /**
+     * 请求购物车数据
+     */
+    private void requstData() {
+        params = new HashMap<>();
+        params.put("uid","71");
+        params.put("page",page+"");
+
+        cartPresenter.getCarts(params);
     }
 
 
@@ -52,6 +69,7 @@ public class CartActivity extends AppCompatActivity implements CartContract.ICar
      */
     private void initView() {
         xRecyclerView = findViewById(R.id.rv);
+
         xRecyclerView.setLoadingListener(this);//设置加载监听器
         xRecyclerView.setLoadingMoreEnabled(true);//设置上拉加载
         xRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -105,9 +123,26 @@ public class CartActivity extends AppCompatActivity implements CartContract.ICar
                 }
             }
 
-            cartAdapter = new CartAdapter(this, carts);
-            cartAdapter.setCartCallback(this);
-            xRecyclerView.setAdapter(cartAdapter);
+            if (page==1){//刷新
+                xRecyclerView.refreshComplete();//加载完成，隐藏头尾加载进度布局
+                cartAdapter = new CartAdapter(this, carts);
+                cartAdapter.setCartCallback(this);
+                xRecyclerView.setAdapter(cartAdapter);
+
+            }else{//上拉
+                if (cartAdapter==null){
+                    cartAdapter = new CartAdapter(this, carts);
+                    cartAdapter.setCartCallback(this);
+                    xRecyclerView.setAdapter(cartAdapter);
+                }else{
+                    cartAdapter.addData(list);
+                }
+                xRecyclerView.loadMoreComplete();
+            }
+
+
+
+
         }
 
     }
@@ -123,7 +158,7 @@ public class CartActivity extends AppCompatActivity implements CartContract.ICar
     private void getTotalPrice() {
         double totalprice = 0;
         //遍历所有商品计算总价
-        for (CartBean.Cart cart : carts) {
+        for (CartBean.Cart cart : cartAdapter.getCarts()) {//得到最新的数据
 
             for (CartBean.Cart.Product product : cart.list) {
 
@@ -154,7 +189,9 @@ public class CartActivity extends AppCompatActivity implements CartContract.ICar
     @Override
     public void onRefresh() {
 
-        xRecyclerView.refreshComplete();
+//        xRecyclerView.refreshComplete();
+        page = 1;
+        requstData();
 
     }
 
@@ -163,6 +200,8 @@ public class CartActivity extends AppCompatActivity implements CartContract.ICar
      */
     @Override
     public void onLoadMore() {
-        xRecyclerView.loadMoreComplete();
+//        xRecyclerView.loadMoreComplete();
+        page++;
+        requstData();
     }
 }
