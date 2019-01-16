@@ -127,7 +127,7 @@ public class CartAdapter extends XRecyclerView.Adapter<CartAdapter.MyVh> impleme
     }
 
     /**
-     * 数量改变后，通知价格联动
+     * 数量改变后，通知首页价格联动
      */
     @Override
     public void notifyNum() {

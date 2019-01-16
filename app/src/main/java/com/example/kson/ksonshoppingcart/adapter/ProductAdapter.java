@@ -54,19 +54,21 @@ public class ProductAdapter extends XRecyclerView.Adapter<ProductAdapter.MyVh>  
 
         myVh.checkBox.setChecked(product.isProductChecked);
 
+
         String[] imgs = product.images.split("\\|");
         if (imgs != null && imgs.length > 0) {
 
             Glide.with(context).load(imgs[0]).into(myVh.iv);
         }
 
-
+        myVh.addMinusView.setNumTv(product.productNum);//设置数量到edittext
         myVh.priceTv.setText("¥：" + product.price);
         myVh.titleTv.setText(product.title);
         //加减器监听
         myVh.addMinusView.setAddMinusCallback(new AddMinusView.AddMinusCallback() {
             @Override
             public void numCallback(int num) {
+
                 product.productNum = num;//对当前商品数量动态改变
                 //通知一级列表数量改变，刷新数据
                 if (cartCallback != null) {

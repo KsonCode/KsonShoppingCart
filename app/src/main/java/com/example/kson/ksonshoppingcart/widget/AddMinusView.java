@@ -78,6 +78,15 @@ public class AddMinusView extends LinearLayout {
     }
 
     /**
+     * 设置加减器数量
+     * @param num 动态
+     */
+    public void setNumTv(int num) {
+        numTv.setText(num+"");
+
+    }
+
+    /**
      * 获取当前view的数量
      * @return
      */
